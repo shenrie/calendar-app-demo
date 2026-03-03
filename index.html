@@ -9,32 +9,34 @@
 <body>
   <div class="app">
     <header class="header">
-      <button id="prev-btn" aria-label="Previous month">&larr;</button>
+      <button id="today-btn" class="today-btn">Today</button>
+      <button id="prev-btn" class="nav-btn" aria-label="Previous month">&#8249;</button>
+      <button id="next-btn" class="nav-btn" aria-label="Next month">&#8250;</button>
       <h1 id="month-year-label"></h1>
-      <button id="next-btn" aria-label="Next month">&rarr;</button>
+      <button id="add-event-btn" class="add-event-btn" aria-label="Add event">+</button>
     </header>
 
-    <div class="day-names">
-      <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+    <div class="day-names" role="row">
+      <span role="columnheader">SUN</span><span role="columnheader">MON</span><span role="columnheader">TUE</span><span role="columnheader">WED</span><span role="columnheader">THU</span><span role="columnheader">FRI</span><span role="columnheader">SAT</span>
     </div>
 
-    <div id="calendar-grid" class="calendar-grid"></div>
+    <div id="calendar-grid" class="calendar-grid" role="grid" aria-label="Calendar"></div>
   </div>
 
   <!-- Event Modal -->
-  <div id="modal-overlay" class="modal-overlay hidden">
+  <div id="modal-overlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal-card">
       <h2 id="modal-title">Add Event</h2>
       <form id="event-form" novalidate>
         <input type="hidden" id="event-id">
 
         <label for="event-title-input">Title *</label>
-        <input type="text" id="event-title-input" required>
-        <span id="title-error" class="error-msg"></span>
+        <input type="text" id="event-title-input" required aria-describedby="title-error">
+        <span id="title-error" class="error-msg" aria-live="polite"></span>
 
         <label for="event-date-input">Date *</label>
-        <input type="date" id="event-date-input" required>
-        <span id="date-error" class="error-msg"></span>
+        <input type="date" id="event-date-input" required aria-describedby="date-error">
+        <span id="date-error" class="error-msg" aria-live="polite"></span>
 
         <label for="event-desc-input">Description</label>
         <textarea id="event-desc-input" rows="3"></textarea>

@@ -7,6 +7,7 @@
   let currentYear;
   let currentMonth; // 0-indexed
   let modalMode = "add"; // "add" or "edit"
+  let modalTriggerElement = null; // element that opened the modal
 
   // DOM references
   const monthYearLabel = document.getElementById("month-year-label");
@@ -24,6 +25,8 @@
   const dateError = document.getElementById("date-error");
   const deleteBtn = document.getElementById("delete-btn");
   const cancelBtn = document.getElementById("cancel-btn");
+  const todayBtn = document.getElementById("today-btn");
+  const addEventBtn = document.getElementById("add-event-btn");
 
   // ─── Initialization ───────────────────────────────────────
 
@@ -34,6 +37,10 @@
 
     prevBtn.addEventListener("click", goToPrevMonth);
     nextBtn.addEventListener("click", goToNextMonth);
+    todayBtn.addEventListener("click", goToToday);
+    addEventBtn.addEventListener("click", function () {
+      openModal("add", { date: formatDateString(new Date()) });
+    });
     eventForm.addEventListener("submit", handleFormSubmit);
     deleteBtn.addEventListener("click", handleDelete);
     cancelBtn.addEventListener("click", closeModal);
@@ -43,8 +50,32 @@
     });
 
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && !modalOverlay.classList.contains("hidden")) {
+      if (modalOverlay.classList.contains("hidden")) return;
+
+      if (e.key === "Escape") {
         closeModal();
+        return;
+      }
+
+      // Focus trap
+      if (e.key === "Tab") {
+        var focusable = modalOverlay.querySelectorAll(
+          'input:not([type="hidden"]):not(.hidden), textarea, button:not(.hidden)'
+        );
+        var first = focusable[0];
+        var last = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
       }
     });
 
@@ -92,16 +123,32 @@
   function createDayCell(date, isCurrentMonth, isToday) {
     const cell = document.createElement("div");
     cell.className = "day-cell";
+    cell.setAttribute("role", "gridcell");
+    cell.setAttribute("tabindex", "0");
+    var label = date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+    cell.setAttribute("aria-label", label);
     if (!isCurrentMonth) cell.classList.add("other-month");
     if (isToday) cell.classList.add("today");
 
     const num = document.createElement("div");
     num.className = "day-number";
-    num.textContent = date.getDate();
+    if (date.getDate() === 1) {
+      var shortMonth = date.toLocaleString("en-US", { month: "short" });
+      num.textContent = shortMonth + " " + date.getDate();
+    } else {
+      num.textContent = date.getDate();
+    }
     cell.appendChild(num);
 
     cell.addEventListener("click", function () {
       openModal("add", { date: formatDateString(date) });
+    });
+
+    cell.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openModal("add", { date: formatDateString(date) });
+      }
     });
 
     return cell;
@@ -111,10 +158,21 @@
     const pill = document.createElement("div");
     pill.className = "event-pill";
     pill.textContent = evt.title;
+    pill.setAttribute("role", "button");
+    pill.setAttribute("tabindex", "0");
+    pill.setAttribute("aria-label", "Edit event: " + evt.title);
 
     pill.addEventListener("click", function (e) {
       e.stopPropagation();
       openModal("edit", evt);
+    });
+
+    pill.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        e.stopPropagation();
+        openModal("edit", evt);
+      }
     });
 
     return pill;
@@ -137,6 +195,13 @@
       currentMonth = 0;
       currentYear++;
     }
+    renderCalendar();
+  }
+
+  function goToToday() {
+    var today = new Date();
+    currentYear = today.getFullYear();
+    currentMonth = today.getMonth();
     renderCalendar();
   }
 
@@ -185,6 +250,7 @@
 
   function openModal(mode, data) {
     modalMode = mode;
+    modalTriggerElement = document.activeElement;
     clearErrors();
 
     if (mode === "edit" && data) {
@@ -210,6 +276,10 @@
   function closeModal() {
     modalOverlay.classList.add("hidden");
     clearErrors();
+    if (modalTriggerElement && typeof modalTriggerElement.focus === "function") {
+      modalTriggerElement.focus();
+      modalTriggerElement = null;
+    }
   }
 
   function clearErrors() {
