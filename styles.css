@@ -1,0 +1,286 @@
+:root {
+  --primary: #3b82f6;
+  --primary-dark: #2563eb;
+  --danger: #ef4444;
+  --bg: #f9fafb;
+  --card-bg: #fff;
+  --border: #e5e7eb;
+  --text: #111827;
+  --text-muted: #9ca3af;
+  --today-bg: #dbeafe;
+  --radius: 8px;
+  --cell-min-h: 100px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.header h1 {
+  font-size: 1.4rem;
+  min-width: 200px;
+  text-align: center;
+}
+
+.header button {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 14px;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.header button:hover {
+  background: var(--border);
+}
+
+/* Day name headers */
+.day-names {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+/* Calendar grid */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+
+.day-cell {
+  min-height: var(--cell-min-h);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 4px;
+  background: var(--card-bg);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.day-cell:hover {
+  background: #f3f4f6;
+}
+
+.day-cell .day-number {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.day-cell.today {
+  background: var(--today-bg);
+}
+
+.day-cell.today .day-number {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+.day-cell.other-month {
+  background: #f9fafb;
+}
+
+.day-cell.other-month .day-number {
+  color: var(--text-muted);
+}
+
+/* Event pills */
+.event-pill {
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.event-pill:hover {
+  background: var(--primary-dark);
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-overlay.hidden {
+  display: none;
+}
+
+.modal-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 24px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.modal-card h2 {
+  margin-bottom: 16px;
+  font-size: 1.2rem;
+}
+
+.modal-card label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  margin-top: 12px;
+}
+
+.modal-card label:first-of-type {
+  margin-top: 0;
+}
+
+.modal-card input[type="text"],
+.modal-card input[type="date"],
+.modal-card textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.modal-card input:focus,
+.modal-card textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.error-msg {
+  color: var(--danger);
+  font-size: 0.8rem;
+  min-height: 1.2em;
+  display: block;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.btn-save {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 8px 20px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.btn-save:hover {
+  background: var(--primary-dark);
+}
+
+.btn-delete {
+  background: var(--danger);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 8px 16px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.btn-delete:hover {
+  background: #dc2626;
+}
+
+.btn-cancel {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 16px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.btn-cancel:hover {
+  background: var(--border);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  :root {
+    --cell-min-h: 60px;
+  }
+
+  .app {
+    padding: 8px;
+  }
+
+  .header h1 {
+    font-size: 1.1rem;
+    min-width: 150px;
+  }
+
+  .day-names span {
+    font-size: 0.75rem;
+  }
+
+  .day-cell .day-number {
+    font-size: 0.75rem;
+  }
+
+  .event-pill {
+    font-size: 0.65rem;
+    padding: 1px 4px;
+  }
+
+  .modal-card {
+    width: 95%;
+    padding: 16px;
+  }
+}

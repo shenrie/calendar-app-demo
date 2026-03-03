@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendar App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <button id="prev-btn" aria-label="Previous month">&larr;</button>
+      <h1 id="month-year-label"></h1>
+      <button id="next-btn" aria-label="Next month">&rarr;</button>
+    </header>
+
+    <div class="day-names">
+      <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+    </div>
+
+    <div id="calendar-grid" class="calendar-grid"></div>
+  </div>
+
+  <!-- Event Modal -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal-card">
+      <h2 id="modal-title">Add Event</h2>
+      <form id="event-form" novalidate>
+        <input type="hidden" id="event-id">
+
+        <label for="event-title-input">Title *</label>
+        <input type="text" id="event-title-input" required>
+        <span id="title-error" class="error-msg"></span>
+
+        <label for="event-date-input">Date *</label>
+        <input type="date" id="event-date-input" required>
+        <span id="date-error" class="error-msg"></span>
+
+        <label for="event-desc-input">Description</label>
+        <textarea id="event-desc-input" rows="3"></textarea>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn-save">Save</button>
+          <button type="button" id="delete-btn" class="btn-delete hidden">Delete</button>
+          <button type="button" id="cancel-btn" class="btn-cancel">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
