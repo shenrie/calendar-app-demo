@@ -117,3 +117,25 @@
 - No build commands invented — the app genuinely requires only opening a file in a browser
 - Responsive breakpoint (600px) confirmed from `styles.css`
 - ARIA attributes and keyboard behaviour confirmed from both `index.html` and `app.js`
+
+---
+
+## Tailwind CSS v4 Migration
+
+Convert styling from custom CSS to Tailwind CSS v4 utility classes using the Play CDN.
+
+### Checklist
+
+- [x] 1. Add Tailwind CSS v4 Play CDN `<script>` to `index.html` `<head>`
+- [x] 2. Add `<style type="text/tailwindcss">` with custom theme (Google Calendar colors, fonts) and pseudo-element/complex selector CSS that Tailwind can't replace
+- [x] 3. Convert `index.html` static elements to Tailwind utility classes (header, buttons, day-names, modal, form, action buttons)
+- [x] 4. Update `app.js` dynamic class names to use Tailwind classes (day-cell, day-number, event-pill, today, other-month)
+- [x] 5. Remove `styles.css` and its `<link>` from HTML
+- [x] 6. Verify visual parity with original design
+
+### Review
+
+**Changes made:**
+- **index.html**: Replaced `<link rel="stylesheet" href="styles.css">` with Tailwind v4 Play CDN `<script>` tag and a `<style type="text/tailwindcss">` block. All static elements now use Tailwind utility classes. Custom `@theme` defines Google Calendar colors (primary, danger, border, text, text-muted, hover). Remaining custom CSS handles: `::before` pseudo-element on event pills, `.today .day-number` highlight, `.other-month .day-number` muting, focus-visible indicators, and responsive breakpoint at 600px.
+- **app.js**: `createDayCell()` now applies Tailwind utilities for min-height, border, padding, background, cursor, overflow, and hover. `day-number` div uses Tailwind for sizing, typography, and rounded-full. `createEventPill()` uses Tailwind for flex, gap, text size, padding, truncation, and hover. The semantic class names (`day-cell`, `day-number`, `event-pill`, `today`, `other-month`) are preserved alongside Tailwind classes so the custom CSS selectors in the `<style>` block still work.
+- **styles.css**: Deleted — all styling now lives in Tailwind utilities + inline `<style>` block.

@@ -122,7 +122,7 @@
 
   function createDayCell(date, isCurrentMonth, isToday) {
     const cell = document.createElement("div");
-    cell.className = "day-cell";
+    cell.className = "day-cell min-h-[120px] border-r border-b border-border px-2 py-1 bg-white cursor-pointer overflow-hidden hover:bg-cell-hover";
     cell.setAttribute("role", "gridcell");
     cell.setAttribute("tabindex", "0");
     var label = date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
@@ -131,7 +131,7 @@
     if (isToday) cell.classList.add("today");
 
     const num = document.createElement("div");
-    num.className = "day-number";
+    num.className = "day-number text-sm font-medium text-center mx-auto mb-1 w-7 h-7 leading-7 rounded-full text-text";
     if (date.getDate() === 1) {
       var shortMonth = date.toLocaleString("en-US", { month: "short" });
       num.textContent = shortMonth + " " + date.getDate();
@@ -156,7 +156,7 @@
 
   function createEventPill(evt) {
     const pill = document.createElement("div");
-    pill.className = "event-pill";
+    pill.className = "event-pill flex items-center gap-1.5 text-xs px-1 py-0.5 rounded mb-0.5 whitespace-nowrap overflow-hidden text-ellipsis cursor-pointer text-text hover:bg-hover";
     pill.textContent = evt.title;
     pill.setAttribute("role", "button");
     pill.setAttribute("tabindex", "0");

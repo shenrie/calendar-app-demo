@@ -4,47 +4,124 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calendar App</title>
-  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-primary: #1a73e8;
+      --color-primary-dark: #1765cc;
+      --color-danger: #d93025;
+      --color-danger-dark: #c5221f;
+      --color-border: #dadce0;
+      --color-text: #3c4043;
+      --color-text-muted: #5f6368;
+      --color-hover: #f1f3f4;
+      --color-cell-hover: #f8f9fa;
+    }
+
+    body {
+      font-family: "Google Sans", Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    /* Event pill dot — pseudo-element not possible with Tailwind */
+    .event-pill::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      flex-shrink: 0;
+    }
+
+    /* Today highlight on day number */
+    .today .day-number {
+      background: var(--color-primary);
+      color: #fff;
+    }
+
+    /* Muted day numbers for other-month cells */
+    .other-month .day-number {
+      color: var(--color-text-muted);
+    }
+
+    /* Focus indicators */
+    .day-cell:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: -2px;
+    }
+
+    .event-pill:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 1px;
+      border-radius: 4px;
+    }
+
+    /* Responsive overrides */
+    @media (max-width: 600px) {
+      .day-cell {
+        min-height: 60px;
+        padding: 2px 4px;
+      }
+
+      .day-number {
+        font-size: 0.75rem;
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+      }
+
+      .event-pill {
+        font-size: 0.65rem;
+        padding: 1px 2px;
+        gap: 3px;
+      }
+
+      .event-pill::before {
+        width: 6px;
+        height: 6px;
+      }
+    }
+  </style>
 </head>
-<body>
-  <div class="app">
-    <header class="header">
-      <button id="today-btn" class="today-btn">Today</button>
-      <button id="prev-btn" class="nav-btn" aria-label="Previous month">&#8249;</button>
-      <button id="next-btn" class="nav-btn" aria-label="Next month">&#8250;</button>
-      <h1 id="month-year-label"></h1>
-      <button id="add-event-btn" class="add-event-btn" aria-label="Add event">+</button>
+<body class="bg-white text-text leading-normal">
+  <div>
+    <header class="flex items-center gap-3 px-4 py-2 border-b border-border bg-white">
+      <button id="today-btn" class="bg-white border border-border rounded px-4 py-1.5 text-sm text-text cursor-pointer hover:bg-hover focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2">Today</button>
+      <button id="prev-btn" class="bg-transparent border-none rounded-full w-9 h-9 text-xl text-text-muted cursor-pointer flex items-center justify-center hover:bg-hover focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2" aria-label="Previous month">&#8249;</button>
+      <button id="next-btn" class="bg-transparent border-none rounded-full w-9 h-9 text-xl text-text-muted cursor-pointer flex items-center justify-center hover:bg-hover focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2" aria-label="Next month">&#8250;</button>
+      <h1 id="month-year-label" class="text-[1.4rem] font-normal text-text max-sm:text-lg"></h1>
+      <button id="add-event-btn" class="ml-auto bg-primary text-white border-none rounded-full w-9 h-9 text-xl leading-none cursor-pointer flex items-center justify-center hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2" aria-label="Add event">+</button>
     </header>
 
-    <div class="day-names" role="row">
+    <div class="grid grid-cols-7 text-center font-medium text-[0.7rem] text-text-muted tracking-wide border-b border-border py-2" role="row">
       <span role="columnheader">SUN</span><span role="columnheader">MON</span><span role="columnheader">TUE</span><span role="columnheader">WED</span><span role="columnheader">THU</span><span role="columnheader">FRI</span><span role="columnheader">SAT</span>
     </div>
 
-    <div id="calendar-grid" class="calendar-grid" role="grid" aria-label="Calendar"></div>
+    <div id="calendar-grid" class="grid grid-cols-7" role="grid" aria-label="Calendar"></div>
   </div>
 
   <!-- Event Modal -->
-  <div id="modal-overlay" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <div class="modal-card">
-      <h2 id="modal-title">Add Event</h2>
+  <div id="modal-overlay" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="bg-white rounded-lg p-6 w-[90%] max-w-[420px] shadow-xl">
+      <h2 id="modal-title" class="mb-4 text-xl font-normal">Add Event</h2>
       <form id="event-form" novalidate>
         <input type="hidden" id="event-id">
 
-        <label for="event-title-input">Title *</label>
-        <input type="text" id="event-title-input" required aria-describedby="title-error">
-        <span id="title-error" class="error-msg" aria-live="polite"></span>
+        <label for="event-title-input" class="block text-sm font-medium mb-1 text-text-muted">Title *</label>
+        <input type="text" id="event-title-input" required aria-describedby="title-error" class="w-full px-2.5 py-2 border border-border rounded text-[0.95rem] text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20">
+        <span id="title-error" class="text-danger text-xs min-h-[1.2em] block" aria-live="polite"></span>
 
-        <label for="event-date-input">Date *</label>
-        <input type="date" id="event-date-input" required aria-describedby="date-error">
-        <span id="date-error" class="error-msg" aria-live="polite"></span>
+        <label for="event-date-input" class="block text-sm font-medium mb-1 mt-3 text-text-muted">Date *</label>
+        <input type="date" id="event-date-input" required aria-describedby="date-error" class="w-full px-2.5 py-2 border border-border rounded text-[0.95rem] text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20">
+        <span id="date-error" class="text-danger text-xs min-h-[1.2em] block" aria-live="polite"></span>
 
-        <label for="event-desc-input">Description</label>
-        <textarea id="event-desc-input" rows="3"></textarea>
+        <label for="event-desc-input" class="block text-sm font-medium mb-1 mt-3 text-text-muted">Description</label>
+        <textarea id="event-desc-input" rows="3" class="w-full px-2.5 py-2 border border-border rounded text-[0.95rem] text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"></textarea>
 
-        <div class="modal-actions">
-          <button type="submit" class="btn-save">Save</button>
-          <button type="button" id="delete-btn" class="btn-delete hidden">Delete</button>
-          <button type="button" id="cancel-btn" class="btn-cancel">Cancel</button>
+        <div class="flex gap-2 mt-5">
+          <button type="submit" class="bg-primary text-white border-none rounded px-5 py-2 text-[0.95rem] cursor-pointer hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2">Save</button>
+          <button type="button" id="delete-btn" class="bg-danger text-white border-none rounded px-4 py-2 text-[0.95rem] cursor-pointer hover:bg-danger-dark focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 hidden">Delete</button>
+          <button type="button" id="cancel-btn" class="bg-white border border-border rounded px-4 py-2 text-[0.95rem] text-text cursor-pointer ml-auto hover:bg-hover focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2">Cancel</button>
         </div>
       </form>
     </div>
